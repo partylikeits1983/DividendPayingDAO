@@ -30,7 +30,6 @@ contract PaymentSplitter is Context {
 
 
 
-
     function transfer(address recipient) public payable {
         _balances[recipient]+=msg.value;
     }
@@ -40,11 +39,10 @@ contract PaymentSplitter is Context {
         require(_tokenaddress != account, "PaymentSplitter: Account cannot be token address");
         require(_balances[account] > 0, "PaymentSplitter: account has no shares");
         
-
         uint256 totalReceived = address(this).balance + _totalReleased;
-        uint256 payment = (totalReceived * (100 - _fee)) / 100;
+        uint256 payment = (_balances[account] * (100 - _fee)) / 100;
         
-        dividend = (_balances[account] * _fee) / 100 - _released[_tokenaddress];
+        dividend = (totalReceived * _fee) / 100 - _released[_tokenaddress];
 
         require(payment != 0, "PaymentSplitter: account is not due payment");
 
@@ -52,20 +50,16 @@ contract PaymentSplitter is Context {
         _totalReleased = _totalReleased + payment;
 
         Address.sendValue(account, payment);
-
     }
 
 
-
     function releaseDividend() public virtual {
-
         require(dividend != 0, "PaymentSplitter: account is not due payment");
 
         _released[_tokenaddress] = _released[_tokenaddress] + dividend;
         _totalReleased = _totalReleased + dividend;
 
         Address.sendValue(_tokenaddress, dividend);
-
     }
 
 
@@ -77,6 +71,7 @@ contract PaymentSplitter is Context {
     
     function updeateFee(uint256 fee) public {
         require(msg.sender == _owner, "Only the owner");
+        require(fee <= 10, "Fee must not be higher than 10%");
         _fee = fee;
     }
     
@@ -95,7 +90,6 @@ contract PaymentSplitter is Context {
     }
 
 
-
     function getBalance() public view returns(uint){
         return address(this).balance;
     }
@@ -105,7 +99,6 @@ contract PaymentSplitter is Context {
         return dividend;
     }
     
-
     
     function getUserBalance(address account) public view returns(uint256){
         return _balances[account];
@@ -121,7 +114,6 @@ contract PaymentSplitter is Context {
         return _released[account];
     }
  
-    
 }
 
 
