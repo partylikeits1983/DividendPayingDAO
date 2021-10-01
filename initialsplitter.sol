@@ -37,7 +37,7 @@ contract PaymentSplitter is Context {
 
     function release(address payable account) public virtual {
         require(_tokenaddress != account, "PaymentSplitter: Account cannot be token address");
-        require(_balances[account] > 0, "PaymentSplitter: account has no shares");
+        require(_balances[account] > 0, "PaymentSplitter: account balance is 0");
         
         uint256 totalReceived = address(this).balance + _totalReleased;
         uint256 payment = (_balances[account] * (100 - _fee)) / 100;
@@ -115,10 +115,3 @@ contract PaymentSplitter is Context {
     }
  
 }
-
-
-
-
-
-
-
