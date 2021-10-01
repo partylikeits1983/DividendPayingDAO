@@ -11,4 +11,10 @@ A smart contract that splits accrued fees in accordance with the % of the total 
 
 ----
 
+planned features:
+
+- Add a voting smart contract enables token holders to raise or lower the fees of the initial payment splitter
+
+- NFT support 
+
 
