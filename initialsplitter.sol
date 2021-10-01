@@ -20,7 +20,7 @@ contract PaymentSplitter is Context {
     address private _owner;
     uint256 private _fee;
     
-    uint256 public dividend;
+    uint256 private dividend;
 
 
     constructor(uint256 fee_) {
@@ -37,11 +37,12 @@ contract PaymentSplitter is Context {
 
 
     function release(address payable account) public virtual {
+        require(_balances[account] > 0, "PaymentSplitter: account has no shares");
 
         uint256 totalReceived = address(this).balance + _totalReleased;
-        uint256 payment = (totalReceived * (100 - _fee)) / 100 - _released[account];
+        uint256 payment = (totalReceived * (100 - _fee)) / 100;
         
-        dividend = (totalReceived * _fee) / 100 - _released[_tokenaddress];
+        dividend = (_balances[account] * _fee) / 100 - _released[_tokenaddress];
 
         require(payment != 0, "PaymentSplitter: account is not due payment");
 
@@ -54,7 +55,7 @@ contract PaymentSplitter is Context {
 
 
 
-    function payDividend() public virtual {
+    function releaseDividend() public virtual {
 
         require(dividend != 0, "PaymentSplitter: account is not due payment");
 
