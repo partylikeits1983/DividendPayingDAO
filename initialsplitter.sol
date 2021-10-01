@@ -8,15 +8,16 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 contract PaymentSplitter is Context {
 
 
-    uint256 private _totalShares;
+    
     uint256 private _totalReleased;
     
-    mapping(address => uint256) private _shares;
     mapping(address => uint256) private _released;
     address[] private _payees;
 
 
-
+   /**
+    * all my crap
+    */
 
     mapping(address => uint256) private _balances;
     address private _tokenaddress;
@@ -45,10 +46,9 @@ contract PaymentSplitter is Context {
 
 
     function release(address payable account) public virtual {
-        require(_shares[account] > 0, "PaymentSplitter: account has no shares");
 
         uint256 totalReceived = address(this).balance + _totalReleased;
-        uint256 payment = (totalReceived * _shares[account]) / _totalShares - _released[account];
+        uint256 payment = (totalReceived * (100 - _fee)) / 100 - _released[account];
 
         require(payment != 0, "PaymentSplitter: account is not due payment");
 
@@ -66,6 +66,11 @@ contract PaymentSplitter is Context {
         
     }
     
+    function updeateFee(uint256 fee) public {
+        require(msg.sender == _owner, "Only the owner");
+        _fee = fee;
+    }
+    
     
     
     function owner() public view returns (address) {
@@ -79,16 +84,9 @@ contract PaymentSplitter is Context {
 
 
         
-    function _transfer(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) internal virtual {
-        require(sender != address(0), "ERC20: transfer from the zero address");
-        require(recipient != address(0), "ERC20: transfer to the zero address");
-
-
-        _balances[recipient] += amount;
+    function transfer(address recipient) public payable {
+        
+        _balances[recipient]+=msg.value;
 
     }
     
@@ -100,8 +98,8 @@ contract PaymentSplitter is Context {
     
     
     
-    function getMyBalance() public view returns(uint){
-        return _balances[msg.sender];
+    function getUserBalance(address account) public view returns(uint256){
+        return _balances[account];
     }
  
     
