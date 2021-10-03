@@ -21,8 +21,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
     string private _name;
     string private _symbol;
-    
-    
+      
     event PayeeAdded(address account, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
@@ -33,7 +32,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     
     mapping(address => uint256) private _released;
     address[] private _payees;
-
 
     constructor(
         string memory name_, 
@@ -53,7 +51,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         }
       
     }
-    
 
     function name() public view virtual override returns (string memory) {
         return _name;
@@ -88,13 +85,10 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         _approve(_msgSender(), spender, amount);
         return true;
     }
-    
-
+    //* @dev this function needs to be deleted
     function basispoints(address account) public view virtual returns (uint256) {
-        return _basisPoints[account];
-        
+        return _basisPoints[account];    
     }
-
     
     function transferFrom(
         address sender,
@@ -112,7 +106,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return true;
     }
 
-
     function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
         _approve(_msgSender(), spender, _allowances[_msgSender()][spender] + addedValue);
         return true;
@@ -127,7 +120,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
         return true;
     }
-
 
     function _transfer(
         address sender,
@@ -148,8 +140,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         
         _balances[recipient] += amount;
         _payees.push(recipient);
-        
-        _basisPoints[recipient] = (_balances[recipient] * 10000000000000000000000000) / _totalSupply;
         
         emit Transfer(sender, recipient, amount);
         _afterTokenTransfer(sender, recipient, amount);
@@ -282,6 +272,4 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         emit PayeeAdded(account, amount);
     }
 }
-
-    
 
