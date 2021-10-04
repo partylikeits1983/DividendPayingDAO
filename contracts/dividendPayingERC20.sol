@@ -15,8 +15,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
     mapping(address => mapping(address => uint256)) private _allowances;
     
-    mapping (address => uint) private _basisPoints;
-    
     uint256 private _totalSupply;
 
     string private _name;
@@ -84,10 +82,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     function approve(address spender, uint256 amount) public virtual override returns (bool) {
         _approve(_msgSender(), spender, amount);
         return true;
-    }
-    //* @dev this function needs to be deleted
-    function basispoints(address account) public view virtual returns (uint256) {
-        return _basisPoints[account];    
     }
     
     function transferFrom(
