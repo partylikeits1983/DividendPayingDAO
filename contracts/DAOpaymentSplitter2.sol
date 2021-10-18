@@ -6,90 +6,10 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Context.sol";
 
-import "@openzeppelin/contracts/utils/Address.sol";
+//import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-/* @dev rename these functions in PaymentSplitter */
-
-contract PaymentSplitter is Context {
-
-    uint256 private _totalReleased;
-    mapping(address => uint256) private _released;
-    address[] private _payees;
-    
-    uint256 private _fee = 5;
-    address private _owner = msg.sender;
-
-    mapping(address => uint256) private _balances;
-    
-    uint256 public dividend;
-
-    address _tokenaddress = address(this);
-
-
-
-    function transfer(address recipient) public payable {
-        _balances[recipient]+=msg.value;
-    }
-
-
-    function releaseinit(address payable account) public virtual {
-        
-        require(_balances[account] > 0, "PaymentSplitter: account balance is 0");
-        
-        uint256 totalReceived = address(this).balance + _totalReleased;
-        uint256 payment = (_balances[account] * (100 - _fee)) / 100;
-        
-        dividend += (totalReceived * _fee) / 100 - _released[_tokenaddress];
-
-        require(payment != 0, "PaymentSplitter: account is not due payment");
-
-        _released[account] = _released[account] + payment;
-        _totalReleased = _totalReleased + payment;
-
-        Address.sendValue(account, payment);
-    }
-
-
-    
-    function updeateFee(uint256 fee) public {
-        require(msg.sender == _owner, "Only the owner");
-        require(fee <= 10, "Fee must not be higher than 10%");
-        _fee = fee;
-    }
-    
-    
-    function getfee() public view returns (uint256) {
-        return _fee;
-    }
-    
-    
-    function owner() public view returns (address) {
-        return _owner;
-    }
-    
-    
-    function getUserBalance(address account) public view returns(uint256){
-        return _balances[account];
-    }
-    
-    
-    function totalReleasedinit() public virtual returns (uint256) {
-        return _totalReleased;
-    }
-
-
-    function releasedinit(address account) public virtual returns (uint256) {
-        return _released[account];
-    }
-    
-    
-    function seeDividend() public view returns (uint256) {
-        return dividend;
-    }
- 
-}
-
+import "https://github.com/partylikeits1983/DividendPayingDAO/blob/67bb1c591f9cb322d75fab78ed3dc2ba1721b02c/contracts/initialsplitter.sol";
 
 
 
@@ -318,7 +238,12 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     function payee(uint256 index) public view returns (address) {
         return _payees[index];
     }
+    
+    
+    
 
+    
+    
     /**
      * @dev Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
@@ -337,6 +262,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
         Address.sendValue(account, payment);
         emit PaymentReleased(account, payment);
     }
+
 
     function _addPayee(address account, uint256 amount) private {
         require(account != address(0), "PaymentSplitter: account is the zero address");
