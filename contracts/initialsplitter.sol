@@ -4,7 +4,7 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 
 pragma solidity ^0.8.0;
 /* @dev rename these functions in PaymentSplitter */
-contract PaymentSplitter is Context {
+abstract contract PaymentSplitter is Context {
 
     uint256 private _totalReleased;
     mapping(address => uint256) private _released;
