@@ -51,12 +51,14 @@ contract simpleDAO {
     
     
     uint _voteTime = 200000000;
-    string[] proposalNames = ["2","4"];
+    //string[] proposalNames = ["2", "6"];
 
 
     // Sample input string: ["buy_cupcakes", "no_cupcakes"]
     // First item in string is the one that will execute the purchase 
     // _VendingMachineAddress is the address where the ether will be sent
+  
+  /*
     constructor(
         
 
@@ -68,6 +70,30 @@ contract simpleDAO {
         voters[msg.sender].weight = 0;
 
         for (uint i = 0; i < proposalNames.length; i++) {
+
+            proposals.push(Proposal({
+                name: proposalNames[i],
+                voteCount: 0
+            }));
+        }
+    }
+    */
+    
+    
+    uint256 totalsupply = 100;
+    
+    
+    function createProposal(string[] memory proposalNames) public {
+        require(_balances[msg.sender] != 0);
+        
+        // person who creates proposal must have x percentage of totalsupply
+        uint256 percent = totalsupply / _balances[msg.sender];
+        
+        require(percent >= 10);
+        
+         voteEndTime = block.timestamp + _voteTime;
+         
+         for (uint i = 0; i < proposalNames.length; i++) {
 
             proposals.push(Proposal({
                 name: proposalNames[i],
@@ -113,6 +139,8 @@ contract simpleDAO {
                 
                 decision = winningProposal_;
                 ended = true;
+                
+                
             }
         }
     }
@@ -130,16 +158,15 @@ contract simpleDAO {
             "Must count vote first");  
             
             
-        require(
-            decision == 0,
-            "DAO decided to not buy cupcakes. Members may withdraw deposited ether.");
+
             
             
         if (DAObalance  < 1 ether) revert();
             (bool success, ) = address(VendingMachineAddress).call{value: 1 ether}(abi.encodeWithSignature("purchase(uint256)", 1));
             require(success);
             
-        DAObalance = address(this).balance;
+        
+        delete proposals;
   
         }
     
