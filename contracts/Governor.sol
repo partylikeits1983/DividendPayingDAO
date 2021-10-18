@@ -2,14 +2,15 @@
 
 pragma solidity ^0.8.0;
 
-import "../utils/cryptography/ECDSA.sol";
-import "../utils/cryptography/draft-EIP712.sol";
-import "../utils/introspection/ERC165.sol";
-import "../utils/math/SafeCast.sol";
-import "../utils/Address.sol";
-import "../utils/Context.sol";
-import "../utils/Timers.sol";
-import "./IGovernor.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/ECDSA.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/draft-EIP712.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/introspection/ERC165.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeCast.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Address.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Context.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Timers.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/IGovernor.sol";
+
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
