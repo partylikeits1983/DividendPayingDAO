@@ -19,11 +19,6 @@ contract PaymentSplitter is Context {
 
     address _tokenaddress = address(this);
     
-    uint256 payment = 0;
-    
-    address account = address(0);
-
-
 
     function transfer(address recipient) public payable {
         _balances[recipient]+=msg.value;
