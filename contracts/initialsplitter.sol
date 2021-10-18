@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
-
-
-contract PaymentSplitter {
+/* @dev rename these functions in PaymentSplitter */
+contract PaymentSplitter is Context {
 
     uint256 private _totalReleased;
     mapping(address => uint256) private _released;
@@ -14,7 +13,7 @@ contract PaymentSplitter {
 
     mapping(address => uint256) private _balances;
     
-    uint256 private dividend;
+    uint256 public dividend;
 
     address _tokenaddress = address(this);
 
@@ -32,7 +31,7 @@ contract PaymentSplitter {
         uint256 totalReceived = address(this).balance + _totalReleased;
         uint256 payment = (_balances[account] * (100 - _fee)) / 100;
         
-        dividend = (totalReceived * _fee) / 100 - _released[_tokenaddress];
+        dividend += (totalReceived * _fee) / 100 - _released[_tokenaddress];
 
         require(payment != 0, "PaymentSplitter: account is not due payment");
 
@@ -42,6 +41,11 @@ contract PaymentSplitter {
         Address.sendValue(account, payment);
     }
 
+
+    // make a donation function to share holders 
+    function donation(uint256) public payable {
+        dividend += msg.value;
+    }
 
     
     function updeateFee(uint256 fee) public {
@@ -74,6 +78,10 @@ contract PaymentSplitter {
     function releasedinit(address account) public virtual returns (uint256) {
         return _released[account];
     }
+    
+    
+    function seeDividend() public view returns (uint256) {
+        return dividend;
+    }
  
 }
-
