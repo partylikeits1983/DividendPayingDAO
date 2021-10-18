@@ -18,6 +18,10 @@ contract PaymentSplitter is Context {
     uint256 public dividend;
 
     address _tokenaddress = address(this);
+    
+    uint256 payment = 0
+    
+    address account = "Ox"
 
 
 
