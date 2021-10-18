@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 /* @dev rename these functions in PaymentSplitter */
-contract PaymentSplitter is Context {
+contract PaymentSplitter {
 
     uint256 private _totalReleased;
     mapping(address => uint256) private _released;
