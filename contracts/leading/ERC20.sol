@@ -13,8 +13,27 @@ import "https://github.com/partylikeits1983/DividendPayingDAO/blob/67bb1c591f9cb
 
 import "https://github.com/partylikeits1983/DividendPayingDAO/blob/2406ed553b818bda79207051411e09098be9efd3/contracts/leading/simpleDAO.sol";
 
+
+
 contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter, simpleDAO {
     // @dev seems a bit sketch that _balances is in simpleDAO but it may work...
+    
+ 
+    /* october 18, 2021: what needs to be done:
+    
+    1) uint256 private _totalSupply needs to be passed to simpleDAO
+    
+    probably need to create a function inside of ERC20 that simply calls and passes the variable 
+    to the required function inside of simpleDAO
+    
+    2) try to acheive the same with _balances
+    
+    3) rename functions in initialsplitter & simpleDAO
+    
+    4) code needs to be cleaned up. 
+    
+    */
+    
     //mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -66,9 +85,13 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter, simpleDAO {
         return 18;
     }
 
+    
+    
     function totalSupply() public view virtual override returns (uint256) {
         return _totalSupply;
     }
+    
+    
 
     function balanceOf(address account) public view virtual override returns (uint256) {
         return _balances[account];
