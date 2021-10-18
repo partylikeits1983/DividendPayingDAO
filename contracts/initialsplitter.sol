@@ -19,9 +19,9 @@ contract PaymentSplitter is Context {
 
     address _tokenaddress = address(this);
     
-    uint256 payment = 0
+    uint256 payment = 0;
     
-    address account = "Ox"
+    address account = address(0);
 
 
 
