@@ -13,20 +13,6 @@ import "https://github.com/partylikeits1983/DividendPayingDAO/blob/67bb1c591f9cb
 
 contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     
-    
-    
-    
-    /** October 20 to do:
-     *  
-     * 
-     * 
-     */
-    
-    
-    
-    
-    
-    
     //mapping(address => uint256) private _balances;
     
     uint public voteEndTime;
@@ -49,7 +35,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     }
 
     struct Proposal {
-        uint256 fee;   // short name (up to 32 bytes)
+        string name;   // short name (up to 32 bytes)
         uint voteCount; // number of accumulated votes
     
     }
@@ -66,46 +52,32 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     error voteNotYetEnded();
     
     
-    uint _voteTime = 20; //1209600;
+    uint _voteTime = 200000000;
     //string[] proposalNames = ["2", "6"];
 
     //uint256 totalsupply = 100;
     
     
-    function createProposal(uint256[] memory proposalNames) public payable {
+    function createProposal(string[] memory proposalNames) public {
+        require(_balances[msg.sender] != 0);
         
-        require(_balances[msg.sender] != 0, "this account has no shares");
-        require(proposalNames.length == 1, "you can only create one proposal at a time");
+        // person who creates proposal must have x percentage of totalsupply
+        uint256 percent = _totalSupply / _balances[msg.sender];
         
-        require(msg.value == 1 ether, "you must pay 1 ether");
-        dividend += msg.value;
+        require(percent >= 10);
         
-        // person who creates proposal must have 10 percent of totalsupply *subject to change...
-        uint256 percent = ( 100000 * _balances[msg.sender] ) / _totalSupply;
-        
-        
-        require(percent >= 10000);
-        
-        voteEndTime = block.timestamp + _voteTime;
+         voteEndTime = block.timestamp + _voteTime;
          
-        for (uint i = 0; i < proposalNames.length; i++) {
-        
+         for (uint i = 0; i < proposalNames.length; i++) {
+
             proposals.push(Proposal({
-                fee: proposalNames[i],
+                name: proposalNames[i],
                 voteCount: 0
-        }));
+            }));
         }
     }
     
-    
-    
-    function showPercentage(address account) public view returns (uint256) {
-        // test function to see percent required for proposal creation
-        uint256 percent = ( 100000 * _balances[account] ) / _totalSupply;
-        return percent; 
-    }
-    
-    
+    // proposals are in format 0,1,2,...
     function vote(uint proposal) public {
         
         require(_balances[msg.sender] !=0, "zero balance");
@@ -122,37 +94,40 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     }
 
     // winningProposal must be executed before EndVote
-    function countVote() public view
+    function countVote() public
             returns (uint winningProposal_)
-        {
             
+    {
+        require(
+            block.timestamp > voteEndTime,
+            "Vote not yet ended.");
+        
         uint winningVoteCount = 0;
         for (uint p = 0; p < proposals.length; p++) {
             if (proposals[p].voteCount > winningVoteCount) {
                 winningVoteCount = proposals[p].voteCount;
                 winningProposal_ = p;
+                
+                decision = winningProposal_;
+                ended = true;
+                
             }
         }
     }
-    
 
-    function EndVote() external payable 
-            returns (uint fee) 
-        {
+    function EndVote() public {
         require(
             block.timestamp > voteEndTime,
             "Vote not yet ended.");
           
-            
-        fee = proposals[countVote()].fee;
-        
+        require(
+            ended == true,
+            "Must count vote first");  
+          
         delete proposals;
-        //delete voters[;
-        ended = false;
   
         }
     
-
 
 
     //mapping(address => uint256) private _balances;
@@ -163,9 +138,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
 
     string private _name;
     string private _symbol;
-    
-    
-    
       
     event PayeeAdded(address account, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
@@ -177,29 +149,14 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     
     mapping(address => uint256) private _released;
     address[] private _payees;
-    
-    
-    // hardcoded the constructor for faster development... more warnings but its ok for now...
-    string name_ = "asdf";
-    string symbol_ = "xyz";
-    uint supply = 1000000000000000000000000000;
-    address[] payees = [0x5B38Da6a701c568545dCfcB03FcB875f56beddC4];
-    uint256[] amount= [1000000000000000000000000000];
-    
 
     constructor(
-        
-        /**
         string memory name_, 
         string memory symbol_, 
         uint supply,
         address[] memory payees, 
         uint256[] memory amount) payable {
-        */
-        
-        
-        ) payable {
-        
+            
         _name = name_;
         _symbol = symbol_;
         _mint(msg.sender, supply);
@@ -227,7 +184,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     function totalSupply() public view virtual override returns (uint256) {
         return _totalSupply;
     }
-    
+
     function balanceOf(address account) public view virtual override returns (uint256) {
         return _balances[account];
     }
@@ -399,7 +356,10 @@ contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter {
     }
     
     
+    
 
+    
+    
     /**
      * @dev Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
