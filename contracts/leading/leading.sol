@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import "https://github.com/partylikeits1983/DividendPayingDAO/blob/67bb1c591f9cb322d75fab78ed3dc2ba1721b02c/contracts/initialsplitter.sol";
 
+
 contract simpleDAO {
     
    
@@ -23,7 +24,7 @@ contract simpleDAO {
     uint public DAObalance;
     
     // allow withdrawals
-    mapping(address => uint256) public _balances;
+    mapping(address=>uint) public _balances;
     
     // proposal decision of voters 
     uint decision;
@@ -61,12 +62,14 @@ contract simpleDAO {
     
     
     uint _voteTime = 200000000;
-    string[] proposalNames = ["2","4"];
+    //string[] proposalNames = ["2", "6"];
 
 
     // Sample input string: ["buy_cupcakes", "no_cupcakes"]
     // First item in string is the one that will execute the purchase 
     // _VendingMachineAddress is the address where the ether will be sent
+  
+  /*
     constructor(
         
 
@@ -78,6 +81,30 @@ contract simpleDAO {
         voters[msg.sender].weight = 0;
 
         for (uint i = 0; i < proposalNames.length; i++) {
+
+            proposals.push(Proposal({
+                name: proposalNames[i],
+                voteCount: 0
+            }));
+        }
+    }
+    */
+    
+    
+    uint256 totalsupply = 100;
+    
+    
+    function createProposal(string[] memory proposalNames) public {
+        require(_balances[msg.sender] != 0);
+        
+        // person who creates proposal must have x percentage of totalsupply
+        uint256 percent = totalsupply / _balances[msg.sender];
+        
+        require(percent >= 10);
+        
+         voteEndTime = block.timestamp + _voteTime;
+         
+         for (uint i = 0; i < proposalNames.length; i++) {
 
             proposals.push(Proposal({
                 name: proposalNames[i],
@@ -123,6 +150,8 @@ contract simpleDAO {
                 
                 decision = winningProposal_;
                 ended = true;
+                
+                
             }
         }
     }
@@ -140,23 +169,46 @@ contract simpleDAO {
             "Must count vote first");  
             
             
-        require(
-            decision == 0,
-            "DAO decided to not buy cupcakes. Members may withdraw deposited ether.");
+
             
             
         if (DAObalance  < 1 ether) revert();
             (bool success, ) = address(VendingMachineAddress).call{value: 1 ether}(abi.encodeWithSignature("purchase(uint256)", 1));
             require(success);
             
-        DAObalance = address(this).balance;
+        
+        delete proposals;
   
         }
     
 }
 
 
+
 contract ERC20 is Context, IERC20, IERC20Metadata, PaymentSplitter, simpleDAO {
+    
+    // @dev seems a bit sketch that _balances is in simpleDAO but it may work...
+    
+ 
+    /* october 18, 2021: what needs to be done:
+    
+    1) uint256 private _totalSupply needs to be passed to simpleDAO
+    
+    probably need to create a function inside of ERC20 that simply calls and passes the variable 
+    to the required function inside of simpleDAO
+    
+    2) try to acheive the same with _balances
+    
+    3) rename functions in initialsplitter & simpleDAO
+    
+    4) code needs to be cleaned up. 
+    
+    */
+    
+    //mapping(address => uint256) private _balances;
+    
+    
+    
     // @dev seems a bit sketch that _balances is in simpleDAO but it may work...
     //mapping(address => uint256) private _balances;
 
