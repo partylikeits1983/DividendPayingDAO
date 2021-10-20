@@ -12,28 +12,24 @@ import "@openzeppelin/contracts/utils/Address.sol";
 
 contract ERC20 is Context, IERC20, IERC20Metadata {
     
-    
-
     /**
     
-    SPLITTER
+    INITIAL SPLITTER
     
     */
 
     //uint256 private _totalReleased;
     //mapping(address => uint256) private _released;
     //address[] private _payees;
+    //mapping(address => uint256) private _balances;
     
     uint256 private _fee = 5;
     address private _owner = msg.sender;
-
-    //mapping(address => uint256) private _balances;
     
     uint256 public dividend;
 
     address _tokenaddress = address(this);
     
-
     function transfer(address recipient) public payable {
         _balances[recipient]+=msg.value;
     }
@@ -107,13 +103,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     VOTING
     
     */
-
-
     
     uint public voteEndTime;
-    
-    // allow withdrawals
-    //mapping(address=>uint) public _balances;
     
     // proposal decision of voters 
     uint decision;
@@ -147,8 +138,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     error voteNotYetEnded();
     
     
-    uint _voteTime = 20; //1209600;
-    //string[] proposalNames = ["2", "6"];
+    uint _voteTime = 20; //1209600; 2 WEEKS
 
     
     function createProposal(uint256[] memory proposalNames) public payable {
@@ -183,7 +173,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         uint256 percent = ( 100000 * _balances[account] ) / _totalSupply;
         return percent; 
     }
-    
     
     
     
@@ -258,7 +247,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     string private _symbol;
     
     
-
     event PayeeAdded(address account, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
@@ -271,7 +259,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     address[] private _payees;
     
     
-    // hardcoded the constructor for faster development... more warnings but its ok for now...
+    // hardcoded the constructor for faster development... more warnings but its ok for now... 1B supply
     string name_ = "asdf";
     string symbol_ = "xyz";
     uint supply = 1000000000000000000000000000;
