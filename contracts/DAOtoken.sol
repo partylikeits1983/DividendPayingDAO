@@ -220,6 +220,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         
         // if criteria are met, fee is set and struct Voters is reset 
         if(fee <= 10 && votes >= quorum) {   
+            // DAO UPDATES FEE
             _fee = fee;
         
             for (uint i = 0; i < voterAddress.length; i++)
