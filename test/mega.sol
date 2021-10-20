@@ -106,8 +106,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     
     uint public voteEndTime;
     
-    // proposal decision of voters 
-    uint decision;
+    //quorum is 100 million which is 10% of total supply
+    uint256 public quorum = 100000000000000000000000000;
 
     // default set as false 
     // makes sure votes are counted before ending vote
@@ -129,6 +129,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     
     mapping(address => Voter) public voters;
     Proposal[] public proposals;
+    address[] public voterAddress;
 
 
     //error handlers
@@ -190,10 +191,12 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         sender.voted = true;
         sender.vote = proposal;
         proposals[proposal].voteCount += sender.weight;
+        
+        voterAddress.push(msg.sender);
     }
 
 
-
+    
 
     // winningProposal must be executed before EndVote
     function countVote() public view
@@ -212,24 +215,41 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     
     
 
-    function EndVote() external payable 
-            returns (uint fee) 
-        {
+    function EndVote() public {
         require(
             block.timestamp > voteEndTime,
             "Vote not yet ended.");
           
-            
+        uint256 fee;
+        uint votes;
         fee = proposals[countVote()].fee;
+        votes = proposals[countVote()].voteCount;
         
-        delete proposals;
-        //delete voters[;
-        ended = false;
-  
+        require(fee <= 10, "fee cannot be set higher than 10 percent");
+        
+        require(votes >= quorum, "quorum was not met");
+        
+        // if criteria are met, fee is set and struct Voters is reset 
+        if(fee <= 10 && votes >= quorum) {   
+            _fee = fee;
+        
+            for (uint i = 0; i < voterAddress.length; i++)
+                delete voters[voterAddress[i]];
+        
+        // even if criteria are not met, struct Voters is reset 
+        } else {
+            
+            for (uint i = 0; i < voterAddress.length; i++)
+                delete voters[voterAddress[i]];
+        
+        } 
+        // delete voter address array
+        delete voterAddress;
+            
         }
     
 
-
+    
     /**
     
     TOKEN
