@@ -1,9 +1,9 @@
-#### Dividend Paying Governance Token
+## Dividend Paying Governance Token
 
 A smart contract that splits accrued fees in accordance with the % of the total supply the ERC-20 token holders own.
 
 ----
-## Basic schema of what the smart contracts do.
+#### Basic schema of the smart contract.
 
 <p align="center">
    <img src="/doc/schema1.jpg">
@@ -11,7 +11,7 @@ A smart contract that splits accrued fees in accordance with the % of the total 
 
 ----
 
-Smart Contract Functionality:
+#### Smart Contract Functionality:
 
 main writable functions:
 
@@ -25,9 +25,10 @@ main writable functions:
 
 - vote (vote for fee proposal, quorum is 10% of total supply)
 
-- contractDonation (if outside user wants to make donation to token holders) 
+- contractDonation (if outside user wants to make donation to token holders)
+ 
 
-main readable functions:
+#### main readable functions:
 
 - balanceOf (shows how many ERC20 tokens address has)
 
@@ -42,7 +43,8 @@ main readable functions:
 
 
 
-planned features:
+
+#### planned features:
 
 - clean up DAOtoken.sol by using inheritance
 
