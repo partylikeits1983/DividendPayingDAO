@@ -13,6 +13,16 @@ A smart contract that splits accrued fees in accordance with the % of the total 
 
 ## Smart Contract Functionality:
 
+
+This smart contract functions as a payment backend for a decentralized taxi service. 
+Yandex Taxi and Uber both charge obscene fees (25% not including taxes) to drivers. 
+
+This smart contract decentralizes the payment backend for a Taxi app, while still being able to generate revenue in order to support the development of the project. 
+
+Individuals are incentivized to hold the ERC20 tokens of this smart contract as these tokens generate ETH dividends and function as governance tokens. 
+
+
+
 #### Main writable functions:
 
 - Transfer (transfer from user 1 to user 2)
