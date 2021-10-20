@@ -19,7 +19,7 @@ Yandex Taxi and Uber both charge obscene fees (25% not including taxes) to drive
 
 This smart contract decentralizes the payment backend for a Taxi app, while still being able to generate revenue in order to support the development of the project. 
 
-Individuals are incentivized to hold the ERC20 tokens of this smart contract as these tokens generate ETH dividends and function as governance tokens. 
+Individuals are incentivized to hold the ERC20 tokens of this smart contract as these tokens generate dividends in ETH and function as governance tokens. 
 
 
 
