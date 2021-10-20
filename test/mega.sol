@@ -146,7 +146,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         require(_balances[msg.sender] != 0, "this account has no shares");
         require(proposalNames.length == 1, "you can only create one proposal at a time");
         
-        require(msg.value == 1 ether, "you must pay 1 ether");
+        require(msg.value >= 1 ether, "you must pay 1 ether");
         dividend += msg.value;
         
         // person who creates proposal must have 10 percent of totalsupply *subject to change...
