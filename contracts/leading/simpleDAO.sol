@@ -16,7 +16,7 @@ abstract contract simpleDAO is PaymentSplitter {
     uint256 private _totalSupply;
     
     // allow withdrawals
-    mapping(address=>uint) public _balances;
+    //mapping(address=>uint) public _balances;
     
     // proposal decision of voters 
     uint decision;
