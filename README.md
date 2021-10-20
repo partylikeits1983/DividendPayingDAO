@@ -2,7 +2,7 @@
 
 A smart contract that splits accrued fees in accordance with the % of the total supply the ERC-20 token holders own.
 
-----
+
 #### Basic schema of the smart contract.
 
 <p align="center">
@@ -11,9 +11,9 @@ A smart contract that splits accrued fees in accordance with the % of the total 
 
 ----
 
-#### Smart Contract Functionality:
+## Smart Contract Functionality:
 
-main writable functions:
+#### Main writable functions:
 
 - Transfer (transfer from user 1 to user 2)
 
@@ -26,7 +26,7 @@ main writable functions:
 - vote (vote for fee proposal, quorum is 10% of total supply)
 
 - contractDonation (if outside user wants to make donation to token holders)
- 
+
 
 #### main readable functions:
 
