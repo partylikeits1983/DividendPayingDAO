@@ -6,7 +6,7 @@ A smart contract that splits accrued fees in accordance with the % of the total 
 ## Basic schema of what the smart contracts do.
 
 <p align="center">
-   <img src="/doc/schema1.png">
+   <img src="/doc/schema1.jpg">
 </p>
 
 ----
