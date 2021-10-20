@@ -59,7 +59,7 @@ contract DAOtoken is Context, IERC20, IERC20Metadata {
         
 
 
-        ) payable {
+        
 
         _name = name_;
         _symbol = symbol_;
