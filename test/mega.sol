@@ -102,25 +102,18 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 
 
-
-
-
-
-
     /**
     
     VOTING
     
     */
 
-    
-    
-    //mapping(address => uint256) private _balances;
+
     
     uint public voteEndTime;
     
     // allow withdrawals
-    mapping(address=>uint) public _balances;
+    //mapping(address=>uint) public _balances;
     
     // proposal decision of voters 
     uint decision;
@@ -146,8 +139,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     mapping(address => Voter) public voters;
     Proposal[] public proposals;
 
-    //error handlers
 
+    //error handlers
     /// The vote has already ended.
     error voteAlreadyEnded();
     /// The auction has not ended yet.
@@ -157,8 +150,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     uint _voteTime = 20; //1209600;
     //string[] proposalNames = ["2", "6"];
 
-    //uint256 totalsupply = 100;
-    
     
     function createProposal(uint256[] memory proposalNames) public payable {
         
@@ -194,6 +185,9 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
     
     
+    
+    
+    
     function vote(uint proposal) public {
         
         require(_balances[msg.sender] !=0, "zero balance");
@@ -209,6 +203,9 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         proposals[proposal].voteCount += sender.weight;
     }
 
+
+
+
     // winningProposal must be executed before EndVote
     function countVote() public view
             returns (uint winningProposal_)
@@ -222,6 +219,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
             }
         }
     }
+    
+    
     
 
     function EndVote() external payable 
@@ -249,9 +248,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     */
 
 
-
-
-    //mapping(address => uint256) private _balances;
+    mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
     
@@ -261,8 +258,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     string private _symbol;
     
     
-    
-      
+
     event PayeeAdded(address account, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
@@ -311,36 +307,44 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     function name() public view virtual override returns (string memory) {
         return _name;
     }
+    
 
     function symbol() public view virtual override returns (string memory) {
         return _symbol;
     }
+    
 
     function decimals() public view virtual override returns (uint8) {
         return 18;
     }
+    
 
     function totalSupply() public view virtual override returns (uint256) {
         return _totalSupply;
     }
     
+    
     function balanceOf(address account) public view virtual override returns (uint256) {
         return _balances[account];
     }
+    
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
 
+
     function allowance(address owner, address spender) public view virtual override returns (uint256) {
         return _allowances[owner][spender];
     }
+    
 
     function approve(address spender, uint256 amount) public virtual override returns (bool) {
         _approve(_msgSender(), spender, amount);
         return true;
     }
+    
     
     function transferFrom(
         address sender,
@@ -357,6 +361,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
         return true;
     }
+    
 
     function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
         _approve(_msgSender(), spender, _allowances[_msgSender()][spender] + addedValue);
@@ -372,6 +377,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
         return true;
     }
+    
 
     function _transfer(
         address sender,
@@ -402,6 +408,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
     }
 
+
     function _mint(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: mint to the zero address");
 
@@ -413,6 +420,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
         _afterTokenTransfer(address(0), account, amount);
     }
+    
 
     function _burn(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: burn from the zero address");
@@ -431,6 +439,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         _afterTokenTransfer(account, address(0), amount);
     }
 
+
     function _approve(
         address owner,
         address spender,
@@ -443,11 +452,13 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         emit Approval(owner, spender, amount);
     }
 
+
     function _beforeTokenTransfer(
         address from,
         address to,
         uint256 amount
     ) internal virtual {}
+
 
 
     function _afterTokenTransfer(
@@ -457,14 +468,17 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     ) internal virtual {}
     
     
+    
     receive() external payable virtual {
         emit PaymentReceived(_msgSender(), msg.value);
     }
     
     
+    
     function getBalance() public view returns(uint){
         return address(this).balance;
     }
+    
     
     /**
      * @dev Getter for the total amount of Ether already released.
@@ -473,12 +487,14 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return _totalReleased;
     }
 
+
     /**
      * @dev Getter for the amount of shares held by an account.
      */
     function shares(address account) public view returns (uint256) {
         return _balances[account];
     }
+
 
     /**
      * @dev Getter for the amount of Ether already released to a payee.
@@ -487,13 +503,13 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return _released[account];
     }
 
+
     /**
      * @dev Getter for the address of the payee number `index`.
      */
     function payee(uint256 index) public view returns (address) {
         return _payees[index];
     }
-    
     
 
     /**
@@ -514,6 +530,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         Address.sendValue(account, payment);
         emit PaymentReleased(account, payment);
     }
+
 
 
     function _addPayee(address account, uint256 amount) private {
