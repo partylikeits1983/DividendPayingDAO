@@ -13,7 +13,7 @@ contract simpleDAO is DAOtoken {
     
     uint public voteEndTime;
     
-    //uint256 private _totalSupply;
+    uint256 public _totalSupply;
     
     // allow withdrawals
     //mapping(address=>uint) public _balances;
