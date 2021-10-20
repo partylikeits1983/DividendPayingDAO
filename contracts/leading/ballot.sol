@@ -1,16 +1,19 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.7.0 <0.9.0;
-/// @title Simple DAO smart contract.
-contract simpleDAO {
-    
-   
-    // address of vending machine
-    address payable public VendingMachineAddress;
+/// @title Voting with delegation.
+
+
+import "https://github.com/partylikeits1983/DividendPayingDAO/blob/08acde37d5b0f97668d1dc1fafe316dc289983b0/contracts/initialsplitter.sol";
+
+
+abstract contract Ballot is PaymentSplitter {
+     
+
+    //mapping(address => uint256) private _balances;
     
     uint public voteEndTime;
     
-    // balance of ether in the smart contract
-    uint public DAObalance;
+    uint256 private _totalSupply;
     
     // allow withdrawals
     mapping(address=>uint) public _balances;
@@ -22,7 +25,6 @@ contract simpleDAO {
     // makes sure votes are counted before ending vote
     bool ended;
     
-
     struct Voter {
         uint weight; // weight is accumulated by delegation
         bool voted;  // if true, that person already voted
@@ -31,14 +33,12 @@ contract simpleDAO {
     }
 
     struct Proposal {
-        string name;   // short name (up to 32 bytes)
+        uint256 fee;   // short name (up to 32 bytes)
         uint voteCount; // number of accumulated votes
     
     }
-
-    // address of the person who set up the vote 
     
-
+    
     mapping(address => Voter) public voters;
     Proposal[] public proposals;
 
@@ -50,63 +50,46 @@ contract simpleDAO {
     error voteNotYetEnded();
     
     
-    uint _voteTime = 200000000;
+    uint _voteTime = 20; //1209600;
     //string[] proposalNames = ["2", "6"];
 
-
-    // Sample input string: ["buy_cupcakes", "no_cupcakes"]
-    // First item in string is the one that will execute the purchase 
-    // _VendingMachineAddress is the address where the ether will be sent
-  
-  /*
-    constructor(
+    //uint256 totalsupply = 100;
+    
+    
+    function createProposal(uint256[] memory proposalNames) public payable {
         
-
-    ) {
+        require(_balances[msg.sender] != 0, "this account has no shares");
+        require(proposalNames.length == 1, "you can only create one proposal at a time");
         
-        //chairperson = msg.sender;
+        require(msg.value == 1 ether, "you must pay 1 ether");
+        dividend += msg.value;
+        
+        // person who creates proposal must have 10 percent of totalsupply *subject to change...
+        uint256 percent = ( 100000 * _balances[msg.sender] ) / _totalSupply;
+        
+        
+        require(percent >= 10000);
         
         voteEndTime = block.timestamp + _voteTime;
-        voters[msg.sender].weight = 0;
-
-        for (uint i = 0; i < proposalNames.length; i++) {
-
-            proposals.push(Proposal({
-                name: proposalNames[i],
-                voteCount: 0
-            }));
-        }
-    }
-    */
-    
-    
-    uint256 totalsupply = 100;
-    
-    
-    function createProposal(string[] memory proposalNames) public {
-        require(_balances[msg.sender] != 0);
-        
-        // person who creates proposal must have x percentage of totalsupply
-        uint256 percent = totalsupply / _balances[msg.sender];
-        
-        require(percent >= 10);
-        
-         voteEndTime = block.timestamp + _voteTime;
          
-         for (uint i = 0; i < proposalNames.length; i++) {
-
+        for (uint i = 0; i < proposalNames.length; i++) {
+        
             proposals.push(Proposal({
-                name: proposalNames[i],
+                fee: proposalNames[i],
                 voteCount: 0
-            }));
+        }));
         }
     }
     
     
     
-
-
-    // proposals are in format 0,1,2,...
+    function showPercentage(address account) public view returns (uint256) {
+        // test function to see percent required for proposal creation
+        uint256 percent = ( 100000 * _balances[account] ) / _totalSupply;
+        return percent; 
+    }
+    
+    
     function vote(uint proposal) public {
         
         require(_balances[msg.sender] !=0, "zero balance");
@@ -123,50 +106,33 @@ contract simpleDAO {
     }
 
     // winningProposal must be executed before EndVote
-    function countVote() public
+    function countVote() public view
             returns (uint winningProposal_)
+        {
             
-    {
-        require(
-            block.timestamp > voteEndTime,
-            "Vote not yet ended.");
-        
         uint winningVoteCount = 0;
         for (uint p = 0; p < proposals.length; p++) {
             if (proposals[p].voteCount > winningVoteCount) {
                 winningVoteCount = proposals[p].voteCount;
                 winningProposal_ = p;
-                
-                decision = winningProposal_;
-                ended = true;
-                
-                
             }
         }
     }
+    
 
-
-    // ends the vote
-    // if DAO decided not to buy cupcakes members can withdraw deposited ether
-    function EndVote() public {
+    function EndVote() external payable 
+            returns (uint fee) 
+        {
         require(
             block.timestamp > voteEndTime,
             "Vote not yet ended.");
           
-        require(
-            ended == true,
-            "Must count vote first");  
             
-            
-
-            
-            
-        if (DAObalance  < 1 ether) revert();
-            (bool success, ) = address(VendingMachineAddress).call{value: 1 ether}(abi.encodeWithSignature("purchase(uint256)", 1));
-            require(success);
-            
+        fee = proposals[countVote()].fee;
         
         delete proposals;
+        //delete voters[;
+        ended = false;
   
         }
     
