@@ -3,7 +3,7 @@ pragma solidity >=0.7.0 <0.9.0;
 /// @title Voting with delegation.
 
 
-import "https://github.com/partylikeits1983/DividendPayingDAO/blob/889f7cd7c97275369a25931eb96f73105b4a53e2/test/ERC20.sol";
+import "https://github.com/partylikeits1983/DividendPayingDAO/blob/dc3a09864f939a231ac3d8fb1870196eb6815297/test/ERC20.sol";
 
 
 abstract contract simpleDAO is DAOtoken {
