@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.0;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
@@ -13,34 +12,26 @@ import "@openzeppelin/contracts/utils/Address.sol";
 contract ERC20 is Context, IERC20, IERC20Metadata {
     
     /**
-    
-    INITIAL SPLITTER
-    
+    INITIAL SPLITTER 
     */
-
-    //uint256 private _totalReleased;
-    
-    //address[] private _payees;
-    //mapping(address => uint256) private _balances;
     
     mapping(address => uint256) private _userBalance;
     mapping(address => uint256) private _userReleased;
     uint256 public _totalUserReleased;
     
-    
-    uint256 private _fee = 5;
+    // this variable can be changed by the endVote function
+    uint256 private _fee = 5; 
     address private _owner = msg.sender;
     
     uint256 public dividend;
-
-    address _tokenaddress = address(this);
     
+
     function transfer(address recipient) public payable {
         _userBalance[recipient]+=msg.value;
     }
 
 
-    function releaseinit(address payable account) public virtual {
+    function userRelease(address payable account) public virtual {
         
         require(_userBalance[account] > 0, "PaymentSplitter: account balance is 0");
         
@@ -57,28 +48,26 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         Address.sendValue(account, payment);
     }
     
-    
-
-
 
     // make a donation function to share holders 
-    function donation(uint256) public payable {
+    function contractDonation() public payable {
         dividend += msg.value;
     }
 
-    
-    function updeateFee(uint256 fee) public {
+
+    // function updateFee will eventually be deleted 
+    function updateFee(uint256 fee) public {
         require(msg.sender == _owner, "Only the owner");
         require(fee <= 10, "Fee must not be higher than 10%");
         _fee = fee;
     }
     
-    
+
     function getfee() public view returns (uint256) {
         return _fee;
     }
     
-    
+
     function owner() public view returns (address) {
         return _owner;
     }
@@ -89,11 +78,11 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
     
     
-    function totalReleasedinit() public virtual returns (uint256) {
+    function totalUserReleased() public virtual returns (uint256) {
         return _totalUserReleased;
     }
 
-    // weird function consider editing or deleting
+    // @dev - weird function consider editing or deleting
     function releasedinit(address account) public virtual returns (uint256) {
         return _userReleased[account];
     }
@@ -104,12 +93,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
  
 
-
-
     /**
-    
-    VOTING
-    
+    VOTING FUNCTIONALITY
     */
     
     uint public voteEndTime;
@@ -117,10 +102,10 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     //quorum is 100 million which is 10% of total supply
     uint256 public quorum = 100000000000000000000000000;
 
-    // default set as false 
-    // makes sure votes are counted before ending vote
+
     bool ended;
     
+
     struct Voter {
         uint weight; // weight is accumulated by delegation
         bool voted;  // if true, that person already voted
@@ -146,7 +131,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     /// The auction has not ended yet.
     error voteNotYetEnded();
     
-    
+    // SET VOTE TIME
     uint _voteTime = 20; //1209600; 2 WEEKS
 
     
@@ -158,9 +143,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         require(msg.value >= 1 ether, "you must pay 1 ether");
         dividend += msg.value;
         
-        // person who creates proposal must have 10 percent of totalsupply *subject to change...
+        // MUST HAVE 10 PERCENT TO CREATE PROPOSAL *subject to change... (10000 because it allows to calculate percent to 5 decimals)
         uint256 percent = ( 100000 * _balances[msg.sender] ) / _totalSupply;
-        
         
         require(percent >= 10000);
         
@@ -176,13 +160,12 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
     
     
-    
-    function showPercentage(address account) public view returns (uint256) {
+    // will eventually be d
+    function minimumPercentageProposalCreation(address account) public view returns (uint256) {
         // test function to see percent required for proposal creation
         uint256 percent = ( 100000 * _balances[account] ) / _totalSupply;
         return percent; 
     }
-    
     
     
     
@@ -204,9 +187,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
 
 
-    
-
-    // winningProposal must be executed before EndVote
+    // CONSIDER MAKING FUNCTION PRIVATE - this function can be called before vote end 
     function countVote() public view
             returns (uint winningProposal_)
         {
@@ -222,7 +203,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     
     
     
-
+    // NEEDS TO BE EXTENSIVELY TESTED
     function EndVote() public {
         require(
             block.timestamp > voteEndTime,
@@ -257,13 +238,9 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         }
     
 
-    
     /**
-    
-    TOKEN
-    
+    ERC20 TOKEN WITH DIVIDEND PAYMENTS 
     */
-
 
     mapping(address => uint256) private _balances;
 
@@ -305,9 +282,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         uint256[] memory amount) payable {
         */
         
-        
-        ) payable {
-        
+        ) {
+
         _name = name_;
         _symbol = symbol_;
         _mint(msg.sender, supply);
@@ -319,6 +295,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         }
       
     }
+
 
     function name() public view virtual override returns (string memory) {
         return _name;
@@ -384,6 +361,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return true;
     }
 
+
     function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
         uint256 currentAllowance = _allowances[_msgSender()][spender];
         require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
@@ -436,7 +414,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
         _afterTokenTransfer(address(0), account, amount);
     }
-    
+
 
     function _burn(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: burn from the zero address");
@@ -490,50 +468,42 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
     
     
-    
     function getBalance() public view returns(uint){
         return address(this).balance;
     }
     
-    
-    /**
-     * @dev Getter for the total amount of Ether already released.
-     */
+
+    // Getter for the total amount of Ether already released.
     function totalReleased() public view returns (uint256) {
         return _totalReleased;
     }
 
 
-    /**
-     * @dev Getter for the amount of shares held by an account.
-     */
+    // Getter for the amount of shares held by an account.
     function shares(address account) public view returns (uint256) {
         return _balances[account];
     }
 
 
-    /**
-     * @dev Getter for the amount of Ether already released to a payee.
-     */
+    // Getter for the amount of Ether already released to a shareholder.
     function released(address account) public view returns (uint256) {
         return _released[account];
     }
 
 
-    /**
-     * @dev Getter for the address of the payee number `index`.
-     */
+    // Getter for the address of the payee number `index`.
     function payee(uint256 index) public view returns (address) {
         return _payees[index];
     }
     
 
-    /**
-     * @dev Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
-     * total shares and their previous withdrawals.
-     */
-     
-     /**
+
+    /** Triggers a transfer to [account] of the amount of Ether they are owed, according to their percentage of the
+        total shares and their previous withdrawals.
+
+        IN REMIX THIS FUNCTION EXECUTES TRANSACTION BUT FAILS?
+        ON LOCALHOST THIS FUNCTION COMPLETES
+    */
     function release(address payable account) public virtual {
         require(_balances[account] > 0, "PaymentSplitter: account has no shares");
 
@@ -546,26 +516,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         _totalReleased += payment;
 
         Address.sendValue(account, payment);
-        //emit PaymentReleased(account, payment);
-    }
-    */
-
-    function release(address payable account) public virtual {
-        require(_balances[account] > 0, "PaymentSplitter: account has no shares");
-
-        uint256 totalReceived = dividend + _totalReleased;
-        uint256 payment = (totalReceived * _balances[account]) / _totalSupply - _released[account];
-
-        require(payment != 0, "PaymentSplitter: account is not due payment");
-
-        _released[account] = _released[account] + payment;
-        _totalReleased = _totalReleased + payment;
-
-        Address.sendValue(account, payment);
         emit PaymentReleased(account, payment);
     }
-
-
 
 
     function _addPayee(address account, uint256 amount) private {
