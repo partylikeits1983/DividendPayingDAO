@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 
 //import "https://github.com/partylikeits1983/DividendPayingDAO/blob/4321b2dbd427cf091e68601709e905672526a0b0/contracts/leading/simpleDAO.sol";26a0b0/contracts/leading/simp
 
-abstract contract DAOtoken is Context, IERC20, IERC20Metadata {
+contract DAOtoken is Context, IERC20, IERC20Metadata {
 
 
     mapping(address => uint256) public _balances;
@@ -39,14 +39,14 @@ abstract contract DAOtoken is Context, IERC20, IERC20Metadata {
     mapping(address => uint256) private _released;
     address[] private _payees;
 
-
+    
     // hardcoded the constructor for faster development... more warnings but its ok for now...
     string name_ = "asdf";
     string symbol_ = "xyz";
     uint supply = 1000000000000000000000000000;
     address[] payees = [0x5B38Da6a701c568545dCfcB03FcB875f56beddC4];
     uint256[] amount= [1000000000000000000000000000];
-
+    
 
     constructor(
 
