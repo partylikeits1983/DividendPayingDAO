@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 
 //import "https://github.com/partylikeits1983/DividendPayingDAO/blob/4321b2dbd427cf091e68601709e905672526a0b0/contracts/leading/simpleDAO.sol";26a0b0/contracts/leading/simp
 
-contract DAOtoken is Context, IERC20, IERC20Metadata {
+abstract contract DAOtoken is Context, IERC20, IERC20Metadata {
 
 
     mapping(address => uint256) public _balances;
