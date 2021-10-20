@@ -6,7 +6,7 @@ pragma solidity >=0.7.0 <0.9.0;
 import "https://github.com/partylikeits1983/DividendPayingDAO/blob/08acde37d5b0f97668d1dc1fafe316dc289983b0/contracts/initialsplitter.sol";
 
 
-abstract contract Ballot is PaymentSplitter {
+abstract contract simpleDAO is PaymentSplitter {
      
 
     //mapping(address => uint256) private _balances;
