@@ -9,9 +9,9 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 //import "@openzeppelin/contracts/utils/Address.sol";
 
-import "https://github.com/partylikeits1983/DividendPayingDAO/blob/08acde37d5b0f97668d1dc1fafe316dc289983b0/contracts/initialsplitter.sol";
+//import "https://github.com/partylikeits1983/DividendPayingDAO/blob/08acde37d5b0f97668d1dc1fafe316dc289983b0/contracts/initialsplitter.sol";
 
-import "https://github.com/partylikeits1983/DividendPayingDAO/blob/4321b2dbd427cf091e68601709e905672526a0b0/contracts/leading/simpleDAO.sol";
+//import "https://github.com/partylikeits1983/DividendPayingDAO/blob/4321b2dbd427cf091e68601709e905672526a0b0/contracts/leading/simpleDAO.sol";26a0b0/contracts/leading/simp
 
 abstract contract DAOtoken is Context, IERC20, IERC20Metadata {
 
