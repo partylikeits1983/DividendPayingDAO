@@ -6,7 +6,7 @@ pragma solidity >=0.7.0 <0.9.0;
 import "./ERC20.sol";
 
 
-contract simpleDAO is DAOtoken {
+abstract contract simpleDAO is DAOtoken {
      
 
     //mapping(address => uint256) private _balances;
