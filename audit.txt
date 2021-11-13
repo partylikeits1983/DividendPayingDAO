@@ -1,0 +1,181 @@
+
+
+
+
+Аудит
+
+1.  userRelease - будет revert если _userBalance[account] == 1
+
+тк 1 * 95 / 100 = 0
+
+
+
+2.
+struct Proposal {
+uint256 fee; // short name (up to 32 bytes)
+uint voteCount; // number of accumulated votes
+}
+
+
+3, function createProposal -
+require(proposalNames.length == 1
+
+зачем тогда функция принимает массив в аргументах?
+
+
+
+4. function createProposal
+require(msg.value >= 1 ether, "you must pay 1 ether");
+
+может добавить в сообщение "or more"? или сделать условие ==
+
+
+
+5.
+uint _voteTime = 20; //1209600; 2 WEEKS.
+
+почему тогда 20 написанно? если переменная эта не изменяется, то ее можно сделать константой для удешевления работы с контрактом.
+
+
+
+6. createProposal
+
+
+for (uint i = 0; i < proposalNames.length; i++) {
+цикл.. но в начале функции у нас require на 1 элемент в массиве
+
+
+
+7.
+// will eventually be d.  ->
+// will eventually be delete
+
+
+
+8. функция vote.
+
+В начале у нас уже есть проверка
+require(_balances[msg.sender] !=0, "zero balance");
+
+поэтму далее не нужна строка
+require(sender.weight != 0, "Has no right to vote");
+
+
+
+
+
+9. Функция EndVote
+uint256 fee;
+uint votes;
+fee = proposals[countVote()].fee;
+votes = proposals[countVote()].voteCount;
+
+Объявляем сначало переменные, а потом пишем в них. можно сразу объявлять и писать - так дешевле будет.
+
+и опять же uint и uint256 - это одно и тоже
+
+
+
+
+10. функция EndVote
+require(fee <= 10, "fee cannot be set higher than 10 percent");
+
+это лучше добавить в createProposal сразу наверное
+
+
+
+11. Функция EndVote
+if(fee <= 10 && votes >= quorum) {
+
+повторно проверяем fee <=10 - у нас выше уже есть require
+
+
+
+12. Функция EndVote
+
+независимо от того, будут выполнены условия в if или нет - все равно происходит проход по циклу и удаление. Зачем тогда цикл? можно просто удалить массив voterAddress
+
+
+
+13. Функция EndVote
+
+При таких глобальных изменениях, рекомендуется создавать event чтобы все знали об изменеии.
+
+
+
+14. Мб лучше разделить голосование и токен в отдельные контракты?
+
+
+
+15. Имя, символ и supply сделать константами - так будет дешевле
+
+
+
+16. Лучше этот адрес передавать в конструкторе тк адрес может изменится до того, как ты решишь задеплоить, а потом задеплоишь и окажется что нужен передеплой.
+address[] payees = [0x5B38Da6a701c568545dCfcB03FcB875f56beddC4];
+
+
+
+
+17.
+require(payees.length == amount.length, "PaymentSplitter: payees and shares length mismatch");
+require(payees.length > 0, "PaymentSplitter: no payees");
+for (uint256 i = 0; i < payees.length; i++) {
+_addPayee(payees[i], amount[i]);
+}
+
+Видимо значения в будущем будут не захардкожены? раз цикл
+
+
+
+18. Зачем у фнукции release тип virtual - для каких случаем не ясно..
+
+
+
+19.
+error voteAlreadyEnded();
+/// The auction has not ended yet.
+error voteNotYetEnded();
+
+это нигде не используется в контракте
+
+
+
+20. версию компилятора принято писать фиксированную тк могут быть break changes и при деплое контракта в будущем, могут возникнуть баги
+
+
+
+21. реентренси в релиз
+
+
+
+22. Переменные нигде не испльзуются, но объявлены
+
+
+ethbalance
+bool ended;
+
+
+
+23. Все public функции сделать external
+
+public -> external - меньше газа будет есть
+
+
+
+24. Контракт ERC20 наследует IERC20, IERC20Metadat но зачем?
+
+ты получается 2 раза объявляешь и теже функции. Лучше вот так
+
+
+
+25. Подключил библиотеку SafeMath но не написал using SafeMath for ...
+
+
+
+26. Можно добавить подключение contracts/token/ERC20/ERC20.sol и сделать вот так:
+contract MyToken is ERC20('Taxi token' , 'TTX') { к примеру
+
+
+
+27. Функцию  release можно вызвать в любое время - мне кажется это не оч хорошо..  и МНОГО РАЗ
