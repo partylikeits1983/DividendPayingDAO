@@ -1,4 +1,6 @@
 
+Audit thanks to @SlavikDMI https://github.com/SlavikDMI
+Lines with ## are my notes
 
 
 
@@ -8,6 +10,7 @@
 
 тк 1 * 95 / 100 = 0
 
+## 18 zeros at end. Only would result in revert if 0.0000000000000000001 ETH
 
 
 2.
@@ -22,6 +25,7 @@ require(proposalNames.length == 1
 
 зачем тогда функция принимает массив в аргументах?
 
+## yes this needs to be fixed 
 
 
 4. function createProposal
