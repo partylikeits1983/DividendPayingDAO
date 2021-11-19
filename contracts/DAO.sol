@@ -1,30 +1,19 @@
-// SPDX-License-Identifier: GPL-3.0
-pragma solidity >=0.7.0 <0.9.0;
-/// @title Voting with delegation.
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
+import "./splitter.sol";
 
-import "./ERC20.sol";
-
-
-abstract contract simpleDAO is DAOtoken {
-     
-
-    //mapping(address => uint256) private _balances;
+contract DAO is splitter {
     
     uint public voteEndTime;
     
-    uint256 public _totalSupply;
-    
-    // allow withdrawals
-    //mapping(address=>uint) public _balances;
-    
-    // proposal decision of voters 
-    uint decision;
+    //quorum is 100 million which is 10% of total supply
+    uint256 public quorum = 100000000000000000000000000;
 
-    // default set as false 
-    // makes sure votes are counted before ending vote
+
     bool ended;
     
+
     struct Voter {
         uint weight; // weight is accumulated by delegation
         bool voted;  // if true, that person already voted
@@ -41,20 +30,18 @@ abstract contract simpleDAO is DAOtoken {
     
     mapping(address => Voter) public voters;
     Proposal[] public proposals;
+    address[] public voterAddress;
+
 
     //error handlers
-
     /// The vote has already ended.
     error voteAlreadyEnded();
     /// The auction has not ended yet.
     error voteNotYetEnded();
     
-    
-    uint _voteTime = 20; //1209600;
-    //string[] proposalNames = ["2", "6"];
+    // SET VOTE TIME
+    uint _voteTime = 20; //1209600; 2 WEEKS
 
-    //uint256 totalsupply = 100;
-    
     
     function createProposal(uint256[] memory proposalNames) public payable {
         
@@ -64,9 +51,8 @@ abstract contract simpleDAO is DAOtoken {
         require(msg.value >= 1 ether, "you must pay 1 ether");
         dividend += msg.value;
         
-        // person who creates proposal must have 10 percent of totalsupply *subject to change...
+        // MUST HAVE 10 PERCENT TO CREATE PROPOSAL *subject to change... (10000 because it allows to calculate percent to 5 decimals)
         uint256 percent = ( 100000 * _balances[msg.sender] ) / _totalSupply;
-        
         
         require(percent >= 10000);
         
@@ -82,12 +68,13 @@ abstract contract simpleDAO is DAOtoken {
     }
     
     
-    
-    function showPercentage(address account) public view returns (uint256) {
+    // will eventually be d
+    function minimumPercentageProposalCreation(address account) public view returns (uint256) {
         // test function to see percent required for proposal creation
         uint256 percent = ( 100000 * _balances[account] ) / _totalSupply;
         return percent; 
     }
+    
     
     
     function vote(uint proposal) public {
@@ -103,9 +90,12 @@ abstract contract simpleDAO is DAOtoken {
         sender.voted = true;
         sender.vote = proposal;
         proposals[proposal].voteCount += sender.weight;
+        
+        voterAddress.push(msg.sender);
     }
 
-    // winningProposal must be executed before EndVote
+
+    // CONSIDER MAKING FUNCTION PRIVATE - this function can be called before vote end 
     function countVote() public view
             returns (uint winningProposal_)
         {
@@ -119,21 +109,50 @@ abstract contract simpleDAO is DAOtoken {
         }
     }
     
-
-    function EndVote() external payable 
-            returns (uint fee) 
-        {
+    
+    
+    // NEEDS TO BE EXTENSIVELY TESTED
+    function EndVote() public {
         require(
             block.timestamp > voteEndTime,
             "Vote not yet ended.");
           
-            
+        uint256 fee;
+        uint votes;
         fee = proposals[countVote()].fee;
+        votes = proposals[countVote()].voteCount;
         
-        delete proposals;
-        //delete voters[;
-        ended = false;
-  
+        require(fee <= 10, "fee cannot be set higher than 10 percent");
+        
+        require(votes >= quorum, "quorum was not met");
+        
+        // if criteria are met, fee is set and struct Voters is reset 
+        if(fee <= 10 && votes >= quorum) {   
+            // DAO UPDATES FEE
+            _fee = fee;
+        
+            for (uint i = 0; i < voterAddress.length; i++)
+                delete voters[voterAddress[i]];
+        
+        // even if criteria are not met, struct Voters is reset 
+        } else {
+            
+            for (uint i = 0; i < voterAddress.length; i++)
+                delete voters[voterAddress[i]];
+        
+        } 
+        // delete voter address array
+        delete voterAddress;
+            
         }
     
+
 }
+
+
+
+
+
+
+
+
