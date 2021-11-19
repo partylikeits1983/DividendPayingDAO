@@ -2,10 +2,10 @@
 pragma solidity ^0.8.0;
 
 
+import "../utils/Context.sol";
 import "./IERC20.sol";
 import "./IERC20Metadata.sol";
 
-import "../utils/Context.sol";
 import "../utils/SafeMath.sol";
 import "../utils/Address.sol";
 
@@ -18,9 +18,6 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4c8642b70aad
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4c8642b70aadbac89e2b5a55f49890cd4281546e/contracts/utils/math/SafeMath.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4c8642b70aadbac89e2b5a55f49890cd4281546e/contracts/utils/Address.sol";
 */
-
-
-
 
 
 contract ERC20 is Context, IERC20, IERC20Metadata {
@@ -39,7 +36,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     event PaymentReleased(address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
     
-
     
     uint256 public _totalReleased;
     
@@ -80,6 +76,17 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
     
 
+    // this function is for the dividend payout functionality 
+    function _addPayee(address account, uint256 amount) private {
+        require(account != address(0), "PaymentSplitter: account is the zero address");
+        require(amount > 0, "PaymentSplitter: shares are 0");
+        /** require(_balances[account] == 0, "PaymentSplitter: account already has shares"); **/
+
+        _payees.push(account);
+        _balances[account] = amount;
+        
+        emit PayeeAdded(account, amount);
+    }
 
 
     function name() public view virtual override returns (string memory) {
@@ -245,8 +252,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         address to,
         uint256 amount
     ) internal virtual {}
-    
-    
+
     
     receive() external payable virtual {
         emit PaymentReceived(_msgSender(), msg.value);
@@ -281,18 +287,5 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return _payees[index];
     }
     
-    // this function is for the dividend payout functionality 
-    function _addPayee(address account, uint256 amount) private {
-    require(account != address(0), "PaymentSplitter: account is the zero address");
-    require(amount > 0, "PaymentSplitter: shares are 0");
-    /** require(_balances[account] == 0, "PaymentSplitter: account already has shares"); **/
-
-    _payees.push(account);
-    _balances[account] = amount;
-    
-    emit PayeeAdded(account, amount);
-}
-    
-
 
 }

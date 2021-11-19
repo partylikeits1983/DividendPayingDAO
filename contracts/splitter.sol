@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+
 import "./ERC20/ERC20.sol";
 
 
 contract splitter is ERC20 {
     
-    /**
-    INITIAL SPLITTER 
-    */
     
     mapping(address => uint256) private _userBalance;
     mapping(address => uint256) private _userReleased;
@@ -42,7 +40,28 @@ contract splitter is ERC20 {
 
         Address.sendValue(account, payment);
     }
-    
+
+
+
+    /** Triggers a transfer to [account] of the amount of Ether they are owed, according to their percentage of the
+        total shares and their previous withdrawals.
+
+    */
+    function release(address payable account) public virtual {
+        require(_balances[account] > 0, "PaymentSplitter: account has no shares");
+
+        uint256 totalReceived = dividend + _totalReleased;
+        uint256 payment = (totalReceived * _balances[account]) / _totalSupply - _released[account];
+
+        require(payment != 0, "PaymentSplitter: account is not due payment");
+
+        _released[account] += payment;
+        _totalReleased += payment;
+
+        Address.sendValue(account, payment);
+        emit PaymentReleased(account, payment);
+    }
+
 
     // make a donation function to share holders 
     function contractDonation() public payable {
@@ -81,30 +100,5 @@ contract splitter is ERC20 {
     function releasedinit(address account) public virtual returns (uint256) {
         return _userReleased[account];
     }
-    
-
-    
-    
-    
-    /** Triggers a transfer to [account] of the amount of Ether they are owed, according to their percentage of the
-        total shares and their previous withdrawals.
-
-    */
-    function release(address payable account) public virtual {
-        require(_balances[account] > 0, "PaymentSplitter: account has no shares");
-
-        uint256 totalReceived = dividend + _totalReleased;
-        uint256 payment = (totalReceived * _balances[account]) / _totalSupply - _released[account];
-
-        require(payment != 0, "PaymentSplitter: account is not due payment");
-
-        _released[account] += payment;
-        _totalReleased += payment;
-
-        Address.sendValue(account, payment);
-        emit PaymentReleased(account, payment);
-    }
-
- 
 
 }

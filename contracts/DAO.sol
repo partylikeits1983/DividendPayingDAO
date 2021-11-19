@@ -67,15 +67,7 @@ contract DAO is splitter {
         }
     }
     
-    
-    // will eventually be d
-    function minimumPercentageProposalCreation(address account) public view returns (uint256) {
-        // test function to see percent required for proposal creation
-        uint256 percent = ( 100000 * _balances[account] ) / _totalSupply;
-        return percent; 
-    }
-    
-    
+
     
     function vote(uint proposal) public {
         
@@ -93,7 +85,7 @@ contract DAO is splitter {
         
         voterAddress.push(msg.sender);
     }
-
+    
 
     // CONSIDER MAKING FUNCTION PRIVATE - this function can be called before vote end 
     function countVote() public view
@@ -108,7 +100,6 @@ contract DAO is splitter {
             }
         }
     }
-    
     
     
     // NEEDS TO BE EXTENSIVELY TESTED
@@ -146,13 +137,4 @@ contract DAO is splitter {
             
         }
     
-
 }
-
-
-
-
-
-
-
-
