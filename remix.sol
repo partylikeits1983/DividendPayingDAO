@@ -20,12 +20,10 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4c8642b70aad
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4c8642b70aadbac89e2b5a55f49890cd4281546e/contracts/utils/Address.sol";
 
 
-
-
+// deploy DAO in remix
 
 
 contract ERC20 is Context, IERC20, IERC20Metadata {
-
 
     mapping(address => uint256) public _balances;
 
@@ -283,7 +281,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return _payees[index];
     }
     
-    
+    // this function is for the dividend payout functionality 
     function _addPayee(address account, uint256 amount) private {
     require(account != address(0), "PaymentSplitter: account is the zero address");
     require(amount > 0, "PaymentSplitter: shares are 0");
@@ -308,6 +306,9 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 contract splitter is ERC20 {
     
+    /**
+    INITIAL SPLITTER 
+    */
     
     mapping(address => uint256) private _userBalance;
     mapping(address => uint256) private _userReleased;
@@ -352,7 +353,7 @@ contract splitter is ERC20 {
     // function updateFee will eventually be deleted 
     function updateFee(uint256 fee) public {
         require(msg.sender == _owner, "Only the owner");
-        require(fee <= 10, "Fee cannot be higher than 10%");
+        require(fee <= 10, "Fee must not be higher than 10%");
         _fee = fee;
     }
     
@@ -381,18 +382,13 @@ contract splitter is ERC20 {
         return _userReleased[account];
     }
     
-    
-    function seeDividend() public view returns (uint256) {
-        return dividend;
-    }
+
     
     
     
     /** Triggers a transfer to [account] of the amount of Ether they are owed, according to their percentage of the
         total shares and their previous withdrawals.
 
-        IN REMIX THIS FUNCTION EXECUTES TRANSACTION BUT FAILS?
-        ON LOCALHOST THIS FUNCTION COMPLETES
     */
     function release(address payable account) public virtual {
         require(_balances[account] > 0, "PaymentSplitter: account has no shares");
@@ -415,7 +411,6 @@ contract splitter is ERC20 {
 
 
 
-// voting smart contract 
 
 contract DAO is splitter {
     
@@ -522,6 +517,7 @@ contract DAO is splitter {
             }
         }
     }
+    
     
     
     // NEEDS TO BE EXTENSIVELY TESTED

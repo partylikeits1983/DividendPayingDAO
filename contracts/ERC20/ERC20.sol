@@ -281,7 +281,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return _payees[index];
     }
     
-    
+    // this function is for the dividend payout functionality 
     function _addPayee(address account, uint256 amount) private {
     require(account != address(0), "PaymentSplitter: account is the zero address");
     require(amount > 0, "PaymentSplitter: shares are 0");

@@ -82,20 +82,13 @@ contract splitter is ERC20 {
         return _userReleased[account];
     }
     
-    
-    function seeDividend() public view returns (uint256) {
-        return dividend;
-    }
-    
-    
+
     
     
     
     /** Triggers a transfer to [account] of the amount of Ether they are owed, according to their percentage of the
         total shares and their previous withdrawals.
 
-        IN REMIX THIS FUNCTION EXECUTES TRANSACTION BUT FAILS?
-        ON LOCALHOST THIS FUNCTION COMPLETES
     */
     function release(address payable account) public virtual {
         require(_balances[account] > 0, "PaymentSplitter: account has no shares");
