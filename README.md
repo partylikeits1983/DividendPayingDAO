@@ -11,6 +11,14 @@ A smart contract that splits accrued fees in accordance with the % of the total 
 
 ----
 
+## Rinkeby address
+
+You can interact with the contract on the Rinkeby testnet. Text me on telegram (contact info in bio) and I will send you some ERC20 tokens from this smart contract on Rinkeby. 
+
+
+https://rinkeby.etherscan.io/address/0x562A3e51F33348fa619D0f7EA815958Cd0563b6F#readContract
+
+
 ## Smart Contract Functionality:
 
 
@@ -56,6 +64,6 @@ Individuals are incentivized to hold the ERC20 tokens of this smart contract as 
 
 #### planned features:
 
-- clean up DAOtoken.sol by using inheritance
+- clean up DAOtoken.sol by using inheritance (completed)
 
 
